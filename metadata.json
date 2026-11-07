@@ -1,0 +1,6 @@
+{
+  "name": "Termômetro da Torcida",
+  "description": "Portal esportivo com votação antifraude de torcidas em tempo real e blog de notícias do futebol brasileiro.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

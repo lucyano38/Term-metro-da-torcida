@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Termômetro da Torcida | O Portal Oficial das Torcidas do Brasil</title>
+  <meta name="description" content="Vote no seu time do coração no Termômetro da Torcida com validação matemática de CPF e acompanhe o ranking em tempo real!" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #020617; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased flex flex-col font-sans selection:bg-emerald-500 selection:text-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-slate-950 to-slate-950">
+
+  <!-- ========================================== -->
+  <!-- BARRA SUPERIOR / STATUS AO VIVO            -->
+  <!-- ========================================== -->
+  <div class="border-b border-white/10 bg-slate-950/80 backdrop-blur-md py-2.5 px-4 text-xs font-medium text-emerald-400">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5 overflow-hidden whitespace-nowrap">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold uppercase tracking-wider text-[10px]">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          Ao Vivo
+        </span>
+        <span class="text-slate-300 truncate">Votação nacional aberta 24h • Sistema antifraude com chave única por CPF</span>
+      </div>
+      <div class="hidden sm:flex items-center gap-4 text-slate-400 text-xs">
+        <span class="text-slate-400 font-medium">termometrodatorcida.com.br</span>
+        <button onclick="abrirAdminModal()" class="text-slate-400 hover:text-emerald-400 transition flex items-center gap-1 font-mono text-[11px]">
+          🔒 Área Admin
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CABEÇALHO PRINCIPAL DO PORTAL              -->
+  <!-- ========================================== -->
+  <header class="border-b border-white/10 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 font-black text-2xl shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition transform">
+          ⚽
+        </div>
+        <div>
+          <span class="font-sans font-black text-xl sm:text-2xl tracking-tight text-white uppercase flex items-center gap-1.5">
+            Termômetro <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">da Torcida</span>
+          </span>
+          <p class="text-[11px] text-slate-400 font-medium tracking-tight">O maior censo do futebol brasileiro em tempo real</p>
+        </div>
+      </a>
+
+      <!-- Menu de Navegação -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-300">
+        <a href="#votacao" class="hover:text-emerald-400 transition flex items-center gap-1.5">
+          <span>🔥</span> Votar Agora
+        </a>
+        <a href="#placar" class="hover:text-emerald-400 transition flex items-center gap-1.5">
+          <span>📊</span> Placar Parcial
+        </a>
+        <a href="#blog" class="hover:text-emerald-400 transition flex items-center gap-1.5">
+          <span>📰</span> Notícias
+        </a>
+        <button onclick="abrirAdminModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 text-slate-200 border border-white/10 hover:border-emerald-500/50 transition text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 backdrop-blur-sm">
+          <span>🔑</span> Painel Admin
+        </button>
+      </nav>
+
+      <!-- Botão Mobile -->
+      <button onclick="abrirAdminModal()" class="md:hidden px-3 py-1.5 rounded-xl bg-slate-900 text-xs font-bold text-emerald-400 border border-white/10">
+        🔒 Admin
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- HERO BANNER COM DESTAQUE                   -->
+  <!-- ========================================== -->
+  <section class="relative overflow-hidden py-14 md:py-20 border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-5 backdrop-blur-sm">
+        🇧🇷 Censo Nacional de Clubes 2026
+      </span>
+      <h1 class="font-sans font-black text-3xl sm:text-5xl md:text-6xl text-white tracking-tight uppercase max-w-4xl mx-auto leading-tight">
+        QUAL É A MAIOR E MAIS <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">APAIXONADA TORCIDA</span> DO BRASIL?
+      </h1>
+      <p class="mt-4 text-slate-300 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed font-normal">
+        Chega de enquetes manipuladas por robôs. Aqui no <strong class="text-emerald-400 font-semibold">Termômetro da Torcida</strong> cada torcedor vota <strong class="text-white font-semibold">uma única vez</strong> através de validação matemática de CPF e tecnologia de segurança auditada em tempo real.
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <a href="#votacao" class="px-7 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-sm uppercase tracking-wider shadow-lg shadow-emerald-500/30 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 cursor-pointer">
+          <span>🗳️</span> Registrar Meu Voto
+        </a>
+        <a href="#placar" class="px-7 py-3.5 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/10 hover:border-emerald-500/40 text-white font-semibold text-sm uppercase tracking-wider transition-all backdrop-blur-md flex items-center gap-2">
+          <span>📈</span> Ver Placar em Tempo Real
+        </a>
+      </div>
+
+      <!-- Resumo rápido de estatísticas (Cards Glassmorphism) -->
+      <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
+        <div class="p-5 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 shadow-lg">
+          <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Total de Votos</p>
+          <p id="statTotalVotos" class="font-sans text-2xl font-black text-emerald-400 mt-1">Carregando...</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 shadow-lg">
+          <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Líder Atual</p>
+          <p id="statLiderNome" class="font-sans text-2xl font-black text-white mt-1">-</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 shadow-lg">
+          <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Segurança</p>
+          <p class="font-sans text-xl font-black text-emerald-300 mt-1">100% Antifraude</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 shadow-lg">
+          <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Auditoria</p>
+          <p class="font-sans text-xl font-black text-cyan-300 mt-1">100% Verificado</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- SEÇÃO PRINCIPAL: VOTAÇÃO + PLACAR PARCIAL  -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full space-y-16">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- COLUNA ESQUERDA: FORMULÁRIO DE VOTAÇÃO ANTIFRAUDE -->
+      <section id="votacao" class="lg:col-span-5 bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div class="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl">
+            🗳️
+          </div>
+          <div>
+            <h2 class="font-sans font-bold text-xl text-white uppercase tracking-wide">
+              Votação Oficial da Torcida
+            </h2>
+            <p class="text-xs text-slate-400">1 CPF = 1 Voto registrado e protegido</p>
+          </div>
+        </div>
+
+        <!-- Banner Antifraude -->
+        <div class="mb-6 p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex items-start gap-3 text-xs text-emerald-300">
+          <span class="text-base">🛡️</span>
+          <div>
+            <strong class="font-semibold block text-emerald-200">Trava de Segurança Ativa</strong>
+            O sistema valida seu CPF matematicamente (11 dígitos) e garante a unicidade do seu voto através de chave primária individual. Tentativas duplicadas são bloqueadas automaticamente.
+          </div>
+        </div>
+
+        <!-- Formulário -->
+        <form id="formVotacao" class="space-y-4" onsubmit="enviarVoto(event)">
+          <!-- Nome -->
+          <div>
+            <label for="inputNome" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Seu Nome Completo *
+            </label>
+            <input 
+              type="text" 
+              id="inputNome" 
+              required 
+              placeholder="Ex: Carlos Eduardo de Oliveira"
+              class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 transition text-sm font-medium"
+            />
+          </div>
+
+          <!-- CPF com máscara -->
+          <div>
+            <label for="inputCPF" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center justify-between">
+              <span>Seu CPF * (Apenas 1 voto por pessoa)</span>
+              <span id="cpfStatus" class="text-[11px] font-normal text-slate-400">Digite 11 números</span>
+            </label>
+            <div class="relative">
+              <input 
+                type="text" 
+                id="inputCPF" 
+                required 
+                maxlength="14"
+                placeholder="000.000.000-00"
+                oninput="aoDigitarCPF(this)"
+                class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-white placeholder-slate-500 font-mono tracking-wider focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 transition text-sm"
+              />
+              <div id="cpfIcon" class="absolute right-3.5 top-3.5 text-slate-400">
+                🔒
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">Seus dados são protegidos e auditados exclusivamente para validação de unicidade eleitoral.</p>
+          </div>
+
+          <!-- Time do Coração -->
+          <div>
+            <label for="selectTime" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Seu Time do Coração *
+            </label>
+            <select 
+              id="selectTime" 
+              required
+              class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 transition text-sm font-medium cursor-pointer"
+            >
+              <option value="" disabled selected>Selecione seu clube do coração...</option>
+              <option value="flamengo">🔴⚫ Flamengo (RJ)</option>
+              <option value="corinthians">⚪⚫ Corinthians (SP)</option>
+              <option value="palmeiras">🟢⚪ Palmeiras (SP)</option>
+              <option value="sao-paulo">🔴⚪⚫ São Paulo (SP)</option>
+              <option value="santos">⚪⚫ Santos (SP)</option>
+              <option value="vasco">⚪⚫ Vasco da Gama (RJ)</option>
+              <option value="gremio">🔵⚪⚫ Grêmio (RS)</option>
+              <option value="internacional">🔴⚪ Internacional (RS)</option>
+              <option value="atletico-mg">⚫⚪ Atlético-MG (MG)</option>
+              <option value="cruzeiro">🔵⚪ Cruzeiro (MG)</option>
+              <option value="botafogo">⭐⚫ Botafogo (RJ)</option>
+              <option value="fluminense">🟢⚪🔴 Fluminense (RJ)</option>
+              <option value="bahia">🔵⚪🔴 Bahia (BA)</option>
+              <option value="fortaleza">🔵🔴⚪ Fortaleza (CE)</option>
+              <option value="athletico-pr">🔴⚫ Athletico-PR (PR)</option>
+              <option value="sport">🦁🔴 Sport Recife (PE)</option>
+              <option value="ceara">⚫⚪ Ceará (CE)</option>
+              <option value="vitoria">🔴⚫ Vitória (BA)</option>
+              <option value="coritiba">🟢⚪ Coritiba (PR)</option>
+              <option value="goias">🟢⚪ Goiás (GO)</option>
+            </select>
+          </div>
+
+          <!-- Botão Submeter com Efeito de Brilho -->
+          <button 
+            type="submit" 
+            id="btnVotar"
+            class="w-full mt-2 py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-sm uppercase tracking-wider shadow-lg shadow-emerald-500/30 transition-all duration-300 transform active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>REGISTRAR MEU VOTO</span>
+            <span>⚡</span>
+          </button>
+        </form>
+
+        <!-- Mensagens de Alerta e Feedback -->
+        <div id="votoFeedback" class="mt-4 hidden p-4 rounded-xl text-xs font-medium"></div>
+
+        <!-- Últimos Votantes Auditados -->
+        <div class="mt-6 pt-6 border-t border-white/10">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+            <span>Últimos votos computados</span>
+            <span class="text-emerald-400 font-mono text-[10px]">Auditado</span>
+          </p>
+          <div id="listaUltimosVotos" class="space-y-2 text-xs">
+            <p class="text-slate-500 italic">Aguardando dados...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUNA DIREITA: PLACAR PARCIAL DO TERMÔMETRO EM TEMPO REAL -->
+      <section id="placar" class="lg:col-span-7 bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-xl">
+              🔥
+            </div>
+            <div>
+              <h2 class="font-sans font-bold text-xl text-white uppercase tracking-wide">
+                Termômetro das Torcidas
+              </h2>
+              <p class="text-xs text-slate-400">Classificação ordenada por porcentagem e total de votos (apenas clubes com votos)</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-mono text-slate-400">Tempo Real</span>
+          </div>
+        </div>
+
+        <!-- Barra de Destaque do 1º Lugar -->
+        <div id="cardDestaqueLider" class="mb-6 p-4 rounded-xl bg-gradient-to-r from-amber-950/40 via-slate-900/60 to-slate-900/80 border border-amber-500/30 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-xl bg-amber-400/20 text-amber-300 border border-amber-400/30 flex items-center justify-center font-black text-2xl shadow">
+              🏆
+            </div>
+            <div>
+              <span class="text-[10px] uppercase font-bold text-amber-400 tracking-wider">Torcida Líder Nacional</span>
+              <h3 id="liderCardNome" class="font-sans font-black text-xl text-white uppercase">Apurando...</h3>
+            </div>
+          </div>
+          <div class="text-right">
+            <span id="liderCardPorcentagem" class="font-sans text-2xl font-black text-emerald-400">0.0%</span>
+            <p id="liderCardVotos" class="text-xs text-slate-400 font-mono">0 votos</p>
+          </div>
+        </div>
+
+        <!-- Lista do Placar Ordenada -->
+        <div id="containerPlacar" class="space-y-3 max-h-[580px] overflow-y-auto pr-1">
+          <!-- Renderizado via JavaScript -->
+          <div class="py-8 text-center text-slate-500">Carregando dados do placar...</div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- BLOG DE ESPORTES E FUTEBOL                 -->
+    <!-- Coleção Firestore: "posts_esportes"        -->
+    <!-- ========================================== -->
+    <section id="blog" class="pt-6 border-t border-white/10">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Cobertura Jornalística</span>
+          <h2 class="font-sans font-black text-2xl sm:text-3xl text-white uppercase tracking-tight mt-1 flex items-center gap-2">
+            <span>📰 Notícias e Bastidores do Futebol</span>
+          </h2>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">
+            Artigos, análises táticas, mercado da bola e o clima das arquibancadas em tempo real.
+          </p>
+        </div>
+
+        <!-- Filtros Rápidos de Categoria -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="filtrarBlog('todas')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+            Todas
+          </button>
+          <button onclick="filtrarBlog('Brasileirão')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-900/60 hover:bg-slate-800 text-slate-300 border border-white/10 transition">
+            Brasileirão
+          </button>
+          <button onclick="filtrarBlog('Libertadores')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-900/60 hover:bg-slate-800 text-slate-300 border border-white/10 transition">
+            Libertadores
+          </button>
+          <button onclick="filtrarBlog('Mercado da Bola')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-slate-900/60 hover:bg-slate-800 text-slate-300 border border-white/10 transition">
+            Mercado
+          </button>
+        </div>
+      </div>
+
+      <!-- Grade Responsiva de Notícias (Com Skeleton Loader Inicial para evitar piscagem) -->
+      <div id="gridNoticias" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Skeleton Loader 1 -->
+        <div class="animate-pulse bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden flex flex-col h-96 backdrop-blur-md">
+          <div class="h-48 bg-slate-800/60 w-full"></div>
+          <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+            <div class="space-y-2.5">
+              <div class="h-3 bg-slate-800/60 rounded w-1/4"></div>
+              <div class="h-5 bg-slate-800/60 rounded w-4/5"></div>
+              <div class="h-3 bg-slate-800/60 rounded w-full"></div>
+            </div>
+            <div class="h-4 bg-slate-800/60 rounded w-1/3"></div>
+          </div>
+        </div>
+        <!-- Skeleton Loader 2 -->
+        <div class="animate-pulse bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden flex flex-col h-96 backdrop-blur-md">
+          <div class="h-48 bg-slate-800/60 w-full"></div>
+          <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+            <div class="space-y-2.5">
+              <div class="h-3 bg-slate-800/60 rounded w-1/4"></div>
+              <div class="h-5 bg-slate-800/60 rounded w-4/5"></div>
+              <div class="h-3 bg-slate-800/60 rounded w-full"></div>
+            </div>
+            <div class="h-4 bg-slate-800/60 rounded w-1/3"></div>
+          </div>
+        </div>
+        <!-- Skeleton Loader 3 -->
+        <div class="animate-pulse bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden flex flex-col h-96 backdrop-blur-md">
+          <div class="h-48 bg-slate-800/60 w-full"></div>
+          <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+            <div class="space-y-2.5">
+              <div class="h-3 bg-slate-800/60 rounded w-1/4"></div>
+              <div class="h-5 bg-slate-800/60 rounded w-4/5"></div>
+              <div class="h-3 bg-slate-800/60 rounded w-full"></div>
+            </div>
+            <div class="h-4 bg-slate-800/60 rounded w-1/3"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: LEITURA COMPLETA DA NOTÍCIA         -->
+  <!-- ========================================== -->
+  <div id="modalLeitura" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="bg-slate-900/95 border border-white/10 backdrop-blur-xl rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+      <button onclick="fecharModalLeitura()" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center font-bold transition">
+        ✕
+      </button>
+      <div id="conteudoModalLeitura" class="p-6 sm:p-8 space-y-4">
+        <!-- Injetado dinamicamente -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- PAINEL ADMINISTRATIVO SECRETO              -->
+  <!-- E-mail exclusivo: lucyano.pci@gmail.com    -->
+  <!-- Senha simples: "torcida2026"               -->
+  <!-- Salva na coleção: "posts_esportes"         -->
+  <!-- ========================================== -->
+  <div id="modalAdmin" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="bg-slate-900/95 border border-white/10 backdrop-blur-xl rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative p-6 sm:p-8">
+      
+      <!-- Cabeçalho do Admin -->
+      <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl">
+            🔒
+          </div>
+          <div>
+            <h3 class="font-sans font-bold text-xl text-white uppercase tracking-wide">
+              Área Restrita / Admin
+            </h3>
+            <p class="text-xs text-slate-400">Postar matérias no blog e auditar o sistema</p>
+          </div>
+        </div>
+        <button onclick="fecharAdminModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- TELA 1: AUTENTICAÇÃO EXCLUSIVA (lucyano.pci@gmail.com) -->
+      <div id="adminLoginScreen">
+        <div class="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 text-xs leading-relaxed space-y-2 mb-4">
+          <div class="flex items-center gap-2 font-bold text-emerald-300">
+            <span>🛡️ Administrador Exclusivo Designado</span>
+          </div>
+          <p class="text-slate-300">
+            A postagem diária de matérias no blog e o gerenciamento geral do portal são de acesso restrito e exclusivo do e-mail:
+          </p>
+          <div class="px-3 py-1.5 rounded-lg bg-black/60 border border-emerald-500/30 font-mono text-emerald-400 font-bold text-xs flex items-center justify-between">
+            <span>lucyano.pci@gmail.com</span>
+            <span class="text-[10px] uppercase bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-sans">Autorizado</span>
+          </div>
+          <p class="text-[11px] text-slate-400">
+            Qualquer outro e-mail terá o acesso rejeitado e bloqueado pelo sistema.
+          </p>
+        </div>
+
+        <form onsubmit="autenticarAdmin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+              E-mail do Administrador *
+            </label>
+            <input 
+              type="email" 
+              id="adminEmail" 
+              required
+              value="lucyano.pci@gmail.com"
+              class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm font-medium"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+              Senha de Acesso *
+            </label>
+            <input 
+              type="password" 
+              id="adminSenha" 
+              required
+              placeholder="Digite sua senha..."
+              class="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm font-mono"
+            />
+          </div>
+          <button 
+            type="submit" 
+            class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer shadow-lg shadow-emerald-500/30"
+          >
+            ENTRAR COMO ADMINISTRADOR EXCLUSIVO
+          </button>
+          <div id="adminLoginError" class="hidden p-3 rounded-xl bg-rose-950/70 border border-rose-500/50 text-xs text-rose-300 font-medium"></div>
+        </form>
+      </div>
+
+      <!-- TELA 2: FORMULÁRIO PARA CRIAR NOTÍCIAS (SALVA EM posts_esportes) -->
+      <div id="adminPanelContent" class="hidden space-y-6">
+        <div class="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-white/10 text-xs">
+          <span class="text-emerald-400 font-bold flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Admin Autorizado: <strong class="text-white font-mono">lucyano.pci@gmail.com</strong></span>
+          </span>
+          <button onclick="sairAdmin()" class="text-slate-400 hover:text-rose-400 transition font-mono text-[11px]">
+            Sair da Sessão
+          </button>
+        </div>
+
+        <form id="formNovoPost" onsubmit="criarNovoPost(event)" class="space-y-4">
+          <h4 class="font-sans font-bold text-sm uppercase text-white flex items-center gap-2">
+            <span>✍️</span> Publicar Nova Matéria no Blog
+          </h4>
+
+          <!-- Título -->
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Título da Notícia *</label>
+            <input 
+              type="text" 
+              id="postTitulo" 
+              required
+              placeholder="Ex: Clássico decisivo bate recorde de público no fim de semana"
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-800/50 border border-slate-700 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm"
+            />
+          </div>
+
+          <!-- Subtítulo -->
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Subtítulo / Linha Fina *</label>
+            <input 
+              type="text" 
+              id="postSubtitulo" 
+              required
+              placeholder="Ex: Mais de 60 mil torcedores marcaram presença em noite histórica."
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-800/50 border border-slate-700 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm"
+            />
+          </div>
+
+          <!-- Categoria e Imagem -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Categoria *</label>
+              <select id="postCategoria" class="w-full px-4 py-2.5 rounded-xl bg-slate-800/50 border border-slate-700 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm">
+                <option value="Brasileirão">Brasileirão</option>
+                <option value="Libertadores">Libertadores</option>
+                <option value="Mercado da Bola">Mercado da Bola</option>
+                <option value="Seleção Brasileira">Seleção Brasileira</option>
+                <option value="Copa do Brasil">Copa do Brasil</option>
+                <option value="Torcidas & Cultura">Torcidas & Cultura</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-300 mb-1">URL da Imagem de Capa *</label>
+              <input 
+                type="url" 
+                id="postImagemUrl" 
+                required
+                placeholder="https://images.unsplash.com/photo-..."
+                class="w-full px-4 py-2.5 rounded-xl bg-slate-800/50 border border-slate-700 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Botões rápidos de fotos de teste -->
+          <div class="p-2.5 rounded-xl bg-slate-950 border border-white/10 text-[11px] text-slate-400 space-y-1.5">
+            <span class="font-bold text-slate-300">Sugestões rápidas de fotos esportivas:</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="setFotoPreset('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">⚽ Estádio Noturno</button>
+              <button type="button" onclick="setFotoPreset('https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&q=80')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">🏟️ Torcida Vibrando</button>
+              <button type="button" onclick="setFotoPreset('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">🥅 Bola no Gol</button>
+            </div>
+          </div>
+
+          <!-- Conteúdo -->
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Conteúdo da Matéria *</label>
+            <textarea 
+              id="postConteudo" 
+              rows="5" 
+              required
+              placeholder="Escreva aqui a matéria jornalística completa..."
+              class="w-full px-4 py-2.5 rounded-xl bg-slate-800/50 border border-slate-700 text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 text-sm"
+            ></textarea>
+          </div>
+
+          <button 
+            type="submit" 
+            id="btnPublicarPost"
+            class="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/30"
+          >
+            <span>PUBLICAR NOTÍCIA NO BLOG</span>
+            <span>🚀</span>
+          </button>
+          <div id="postFeedback" class="hidden text-xs p-3 rounded-xl font-medium"></div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- RODAPÉ DO PORTAL                           -->
+  <!-- ========================================== -->
+  <footer class="border-t border-white/10 bg-slate-950/80 backdrop-blur-md py-8 text-xs text-slate-500 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+      <div>
+        <p class="font-sans font-bold text-sm text-slate-300 uppercase">Termômetro da Torcida</p>
+        <p class="text-[11px] text-slate-500">termometrodatorcida.com.br • O portal oficial do censo esportivo das torcidas brasileiras</p>
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <button onclick="abrirAdminModal()" class="hover:text-emerald-400 transition font-mono text-xs">
+          Painel Administrativo (Lucyano)
+        </button>
+        <span>•</span>
+        <span class="text-slate-500">© 2026 Termômetro da Torcida. Todos os direitos reservados.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT MODULAR COM FIREBASE SDK v10    -->
+  <!-- ========================================== -->
+  <script type="module">
+    // Importações Modulares do Firebase SDK v10 via CDN oficial
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      doc, 
+      getDoc, 
+      setDoc, 
+      addDoc, 
+      onSnapshot, 
+      serverTimestamp, 
+      query, 
+      orderBy 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    /* =========================================================================
+     * 1. CONFIGURAÇÃO DO FIREBASE (SDK v10)
+     * ========================================================================= */
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY_AQUI",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      projectId: "SEU_PROJECT_ID",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+      appId: "SEU_APP_ID"
+    };
+
+    const isFirebaseConfigured = firebaseConfig.apiKey && 
+                                !firebaseConfig.apiKey.includes("SUA_API_KEY") && 
+                                firebaseConfig.projectId &&
+                                !firebaseConfig.projectId.includes("SEU_PROJECT");
+
+    let db = null;
+    if (isFirebaseConfigured) {
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+      } catch (err) {
+        console.error("Falha ao inicializar SDK:", err);
+      }
+    }
+
+    /* =========================================================================
+     * 2. CLUBES E CORES DO FUTEBOL BRASILEIRO
+     * ========================================================================= */
+    const CLUBES = {
+      'flamengo': { nome: 'Flamengo', sigla: 'FLA', cor: '#ef4444', emoji: '🔴⚫' },
+      'corinthians': { nome: 'Corinthians', sigla: 'COR', cor: '#f8fafc', emoji: '⚪⚫' },
+      'palmeiras': { nome: 'Palmeiras', sigla: 'PAL', cor: '#10b981', emoji: '🟢⚪' },
+      'sao-paulo': { nome: 'São Paulo', sigla: 'SAO', cor: '#f43f5e', emoji: '🔴⚪⚫' },
+      'santos': { nome: 'Santos', sigla: 'SAN', cor: '#e2e8f0', emoji: '⚪⚫' },
+      'vasco': { nome: 'Vasco da Gama', sigla: 'VAS', cor: '#cbd5e1', emoji: '⚪⚫' },
+      'gremio': { nome: 'Grêmio', sigla: 'GRE', cor: '#0ea5e9', emoji: '🔵⚪⚫' },
+      'internacional': { nome: 'Internacional', sigla: 'INT', cor: '#dc2626', emoji: '🔴⚪' },
+      'atletico-mg': { nome: 'Atlético-MG', sigla: 'CAM', cor: '#94a3b8', emoji: '⚫⚪' },
+      'cruzeiro': { nome: 'Cruzeiro', sigla: 'CRU', cor: '#2563eb', emoji: '🔵⚪' },
+      'botafogo': { nome: 'Botafogo', sigla: 'BOT', cor: '#f8fafc', emoji: '⭐⚫' },
+      'fluminense': { nome: 'Fluminense', sigla: 'FLU', cor: '#9f1239', emoji: '🟢⚪🔴' },
+      'bahia': { nome: 'Bahia', sigla: 'BAH', cor: '#3b82f6', emoji: '🔵⚪🔴' },
+      'fortaleza': { nome: 'Fortaleza', sigla: 'FOR', cor: '#1d4ed8', emoji: '🔵🔴⚪' },
+      'athletico-pr': { nome: 'Athletico-PR', sigla: 'CAP', cor: '#b91c1c', emoji: '🔴⚫' },
+      'sport': { nome: 'Sport Recife', sigla: 'SPT', cor: '#ea580c', emoji: '🦁🔴' },
+      'ceara': { nome: 'Ceará', sigla: 'CSC', cor: '#64748b', emoji: '⚫⚪' },
+      'vitoria': { nome: 'Vitória', sigla: 'VIT', cor: '#e11d48', emoji: '🔴⚫' },
+      'coritiba': { nome: 'Coritiba', sigla: 'CFC', cor: '#059669', emoji: '🟢⚪' },
+      'goias': { nome: 'Goiás', sigla: 'GOI', cor: '#16a34a', emoji: '🟢⚪' }
+    };
+
+    /* =========================================================================
+     * 3. VALIDAÇÃO MATEMÁTICA DE CPF (11 DÍGITOS)
+     * ========================================================================= */
+    function limparCPF(cpf) {
+      return cpf.replace(/\D/g, '');
+    }
+
+    function formatarCPF(v) {
+      const digits = limparCPF(v).slice(0, 11);
+      if (digits.length <= 3) return digits;
+      if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+      if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+      return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
+    }
+
+    function validarAlgoritmoCPF(cpf) {
+      const c = limparCPF(cpf);
+      if (c.length !== 11) return false;
+      if (/^(\d)\1{10}$/.test(c)) return false;
+
+      let soma = 0;
+      for (let i = 0; i < 9; i++) soma += parseInt(c.charAt(i), 10) * (10 - i);
+      let r = (soma * 10) % 11;
+      if (r === 10 || r === 11) r = 0;
+      if (r !== parseInt(c.charAt(9), 10)) return false;
+
+      soma = 0;
+      for (let i = 0; i < 10; i++) soma += parseInt(c.charAt(i), 10) * (11 - i);
+      r = (soma * 10) % 11;
+      if (r === 10 || r === 11) r = 0;
+      if (r !== parseInt(c.charAt(10), 10)) return false;
+
+      return true;
+    }
+
+    window.aoDigitarCPF = function(el) {
+      el.value = formatarCPF(el.value);
+      const digits = limparCPF(el.value);
+      const icon = document.getElementById('cpfIcon');
+      const status = document.getElementById('cpfStatus');
+
+      if (digits.length === 11) {
+        if (validarAlgoritmoCPF(digits)) {
+          icon.innerHTML = '✅';
+          status.innerText = 'CPF válido!';
+          status.className = 'text-[11px] font-semibold text-emerald-400';
+        } else {
+          icon.innerHTML = '❌';
+          status.innerText = 'CPF inválido';
+          status.className = 'text-[11px] font-semibold text-rose-400';
+        }
+      } else {
+        icon.innerHTML = '🔒';
+        status.innerText = `${digits.length}/11 dígitos`;
+        status.className = 'text-[11px] font-normal text-slate-400';
+      }
+    };
+
+    /* =========================================================================
+     * 4. SISTEMA DE VOTAÇÃO ANTIFRAUDE (Coleção "votos_torcida")
+     * TRAVA DE SEGURANÇA: Document ID = CPF Limpo
+     * ========================================================================= */
+    window.enviarVoto = async function(event) {
+      event.preventDefault();
+      const btn = document.getElementById('btnVotar');
+      const feedback = document.getElementById('votoFeedback');
+      const nome = document.getElementById('inputNome').value.trim();
+      const cpfBruto = document.getElementById('inputCPF').value;
+      const cpfLimpo = limparCPF(cpfBruto);
+      const time = document.getElementById('selectTime').value;
+
+      if (!nome) {
+        mostrarFeedback(feedback, 'Informe o seu nome completo.', 'erro');
+        return;
+      }
+      if (!validarAlgoritmoCPF(cpfLimpo)) {
+        mostrarFeedback(feedback, 'O CPF digitado não é válido. Verifique os 11 números.', 'erro');
+        return;
+      }
+      if (!time) {
+        mostrarFeedback(feedback, 'Por favor, selecione seu time do coração.', 'erro');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>Verificando antifraude e registrando...</span>';
+
+      try {
+        if (db) {
+          // FIRESTORE V10
+          const docRef = doc(db, "votos_torcida", cpfLimpo);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            mostrarFeedback(feedback, `⛔ VOTO BLOQUEADO! Este CPF já votou anteriormente no ${data.time ? data.time.toUpperCase() : 'clube registrado'}. O sistema antifraude permite apenas 1 voto por torcedor.`, 'erro');
+            btn.disabled = false;
+            btn.innerHTML = '<span>REGISTRAR MEU VOTO</span> <span>⚡</span>';
+            return;
+          }
+
+          await setDoc(docRef, {
+            nome: nome,
+            time: time,
+            cpfLimpo: cpfLimpo,
+            dataHora: serverTimestamp(),
+            criadoEm: new Date().toISOString()
+          });
+
+          mostrarFeedback(feedback, `🎉 Voto computado com sucesso! A torcida do ${time.toUpperCase()} agradece!`, 'sucesso');
+          document.getElementById('formVotacao').reset();
+          document.getElementById('cpfIcon').innerHTML = '🔒';
+          document.getElementById('cpfStatus').innerText = 'Digite 11 números';
+        } else {
+          // LOCAL FALLBACK
+          const votosLocais = JSON.parse(localStorage.getItem('tdt_votos') || '[]');
+          const jaExiste = votosLocais.find(v => v.cpfLimpo === cpfLimpo);
+
+          if (jaExiste) {
+            mostrarFeedback(feedback, `⛔ VOTO BLOQUEADO! O CPF já registrou voto no clube ${jaExiste.time.toUpperCase()}. Cada torcedor pode votar apenas uma vez.`, 'erro');
+            btn.disabled = false;
+            btn.innerHTML = '<span>REGISTRAR MEU VOTO</span> <span>⚡</span>';
+            return;
+          }
+
+          const novoVoto = {
+            id: cpfLimpo,
+            cpfLimpo: cpfLimpo,
+            nome: nome,
+            time: time,
+            dataHora: new Date().toISOString()
+          };
+
+          votosLocais.unshift(novoVoto);
+          localStorage.setItem('tdt_votos', JSON.stringify(votosLocais));
+          mostrarFeedback(feedback, `🎉 Voto registrado com sucesso! O placar foi atualizado.`, 'sucesso');
+          document.getElementById('formVotacao').reset();
+          document.getElementById('cpfIcon').innerHTML = '🔒';
+          renderizarPlacar(votosLocais);
+        }
+      } catch (err) {
+        console.error("Erro ao registrar voto:", err);
+        mostrarFeedback(feedback, `Falha de conexão: ${err.message}`, 'erro');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>REGISTRAR MEU VOTO</span> <span>⚡</span>';
+      }
+    };
+
+    function mostrarFeedback(el, texto, tipo) {
+      el.classList.remove('hidden', 'bg-rose-950/60', 'border-rose-500/40', 'text-rose-300', 'bg-emerald-950/60', 'border-emerald-500/40', 'text-emerald-300');
+      if (tipo === 'erro') {
+        el.className = 'mt-4 p-4 rounded-xl text-xs font-semibold bg-rose-950/60 border border-rose-500/40 text-rose-300';
+      } else {
+        el.className = 'mt-4 p-4 rounded-xl text-xs font-semibold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300';
+      }
+      el.innerText = texto;
+    }
+
+    /* =========================================================================
+     * 5. PLACAR EM TEMPO REAL E AUDITORIA DE VOTOS (APENAS CLUBES COM VOTOS)
+     * ========================================================================= */
+    function escutarVotos() {
+      if (db) {
+        const colRef = collection(db, "votos_torcida");
+        onSnapshot(colRef, (snapshot) => {
+          const votos = [];
+          snapshot.forEach(docSnap => {
+            votos.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          renderizarPlacar(votos);
+        }, (err) => {
+          console.warn("Erro ao ouvir votos:", err);
+          usarVotosLocaisFallback();
+        });
+      } else {
+        usarVotosLocaisFallback();
+      }
+    }
+
+    function usarVotosLocaisFallback() {
+      let votos = JSON.parse(localStorage.getItem('tdt_votos') || '[]');
+      if (votos.length === 0) {
+        votos = [
+          { id: '11122233344', cpfLimpo: '11122233344', nome: 'Rodrigo Silva', time: 'flamengo', dataHora: 'Há 10 min' },
+          { id: '22233344455', cpfLimpo: '22233344455', nome: 'Ana Paula Ramos', time: 'corinthians', dataHora: 'Há 15 min' },
+          { id: '33344455566', cpfLimpo: '33344455566', nome: 'Gabriel Barbosa', time: 'palmeiras', dataHora: 'Há 25 min' },
+          { id: '44455566677', cpfLimpo: '44455566677', nome: 'Juliana Costa', time: 'sao-paulo', dataHora: 'Há 30 min' },
+          { id: '55566677788', cpfLimpo: '55566677788', nome: 'Mateus Oliveira', time: 'flamengo', dataHora: 'Há 45 min' },
+          { id: '66677788899', cpfLimpo: '66677788899', nome: 'Beatriz Martins', time: 'vasco', dataHora: 'Há 50 min' },
+          { id: '77788899900', cpfLimpo: '77788899900', nome: 'Eduardo Souza', time: 'gremio', dataHora: 'Há 1h' },
+          { id: '88899900011', cpfLimpo: '88899900011', nome: 'Carla Nogueira', time: 'internacional', dataHora: 'Há 1h' },
+          { id: '99900011122', cpfLimpo: '99900011122', nome: 'Felipe Santos', time: 'cruzeiro', dataHora: 'Há 2h' },
+          { id: '00011122233', cpfLimpo: '00011122233', nome: 'Larissa Alencar', time: 'atletico-mg', dataHora: 'Há 2h' },
+          { id: '12345678901', cpfLimpo: '12345678901', nome: 'Thiago Mendes', time: 'botafogo', dataHora: 'Há 3h' },
+          { id: '23456789012', cpfLimpo: '23456789012', nome: 'Camila Ferreira', time: 'fluminense', dataHora: 'Há 3h' },
+          { id: '34567890123', cpfLimpo: '34567890123', nome: 'Vitor Hugo B.', time: 'bahia', dataHora: 'Há 4h' },
+          { id: '45678901234', cpfLimpo: '45678901234', nome: 'Letícia Lima', time: 'palmeiras', dataHora: 'Há 5h' },
+          { id: '56789012345', cpfLimpo: '56789012345', nome: 'Diego Rocha', time: 'flamengo', dataHora: 'Há 6h' },
+        ];
+        localStorage.setItem('tdt_votos', JSON.stringify(votos));
+      }
+      renderizarPlacar(votos);
+    }
+
+    function renderizarPlacar(votos) {
+      const totalVotos = votos.length;
+      document.getElementById('statTotalVotos').innerText = totalVotos.toLocaleString('pt-BR');
+
+      // Agrupa contagem por time
+      const contagem = {};
+      Object.keys(CLUBES).forEach(key => contagem[key] = 0);
+
+      votos.forEach(v => {
+        const timeKey = (v.time || '').toLowerCase();
+        if (contagem[timeKey] !== undefined) {
+          contagem[timeKey]++;
+        } else {
+          contagem[timeKey] = 1;
+        }
+      });
+
+      // Ordena do maior para o menor e filtra EXCLUSIVAMENTE clubes com votos > 0
+      const ranking = Object.keys(contagem).map(key => {
+        const numVotos = contagem[key];
+        const pct = totalVotos > 0 ? (numVotos / totalVotos) * 100 : 0;
+        return {
+          id: key,
+          info: CLUBES[key] || { nome: key, sigla: key.slice(0,3).toUpperCase(), cor: '#10b981', emoji: '⚽' },
+          votos: numVotos,
+          porcentagem: pct
+        };
+      })
+      .filter(item => item.votos > 0)
+      .sort((a, b) => b.votos - a.votos);
+
+      // Atualiza líder
+      const lider = ranking[0];
+      if (lider && lider.votos > 0) {
+        document.getElementById('statLiderNome').innerText = lider.info.nome;
+        document.getElementById('liderCardNome').innerText = `${lider.info.emoji} ${lider.info.nome}`;
+        document.getElementById('liderCardPorcentagem').innerText = `${lider.porcentagem.toFixed(1)}%`;
+        document.getElementById('liderCardVotos').innerText = `${lider.votos} voto(s)`;
+      } else {
+        document.getElementById('statLiderNome').innerText = 'Aguardando votos';
+        document.getElementById('liderCardNome').innerText = 'Aguardando votos';
+        document.getElementById('liderCardPorcentagem').innerText = '0.0%';
+        document.getElementById('liderCardVotos').innerText = '0 votos';
+      }
+
+      // Renderiza as barras (apenas para clubes com votos)
+      const container = document.getElementById('containerPlacar');
+      if (ranking.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-dashed border-white/10">
+            <p class="font-semibold text-slate-300">Nenhum clube pontuou até o momento.</p>
+            <p class="text-xs text-slate-500 mt-1">Vote no formulário para colocar seu time na liderança!</p>
+          </div>
+        `;
+      } else {
+        container.innerHTML = ranking.map((item, index) => {
+          const medalha = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}º`;
+          return `
+            <div class="p-3.5 rounded-xl bg-slate-800/40 border border-white/5 hover:border-emerald-500/30 transition">
+              <div class="flex items-center justify-between gap-3 text-xs mb-2">
+                <div class="flex items-center gap-2.5 font-bold">
+                  <span class="w-6 text-center text-sm font-sans">${medalha}</span>
+                  <span class="text-base">${item.info.emoji}</span>
+                  <span class="text-white text-sm font-sans uppercase tracking-wide">${item.info.nome}</span>
+                  <span class="text-[10px] text-slate-400 font-mono">(${item.info.sigla})</span>
+                </div>
+                <div class="flex items-center gap-3 font-mono">
+                  <span class="text-slate-400 text-xs">${item.votos} voto(s)</span>
+                  <span class="text-emerald-400 font-bold text-sm font-sans">${item.porcentagem.toFixed(1)}%</span>
+                </div>
+              </div>
+              <!-- Barra de Progresso Animada -->
+              <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                <div 
+                  class="h-full rounded-full transition-all duration-700 ease-out"
+                  style="width: ${Math.max(item.porcentagem, 1.5)}%; background-color: ${item.info.cor || '#10b981'};"
+                ></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Atualiza lista de últimos votantes auditados
+      const listaAuditoria = document.getElementById('listaUltimosVotos');
+      const ultimos = votos.slice(0, 4);
+      listaAuditoria.innerHTML = ultimos.map(v => {
+        const cpfMasc = v.cpfLimpo && v.cpfLimpo.length === 11 
+          ? `***.${v.cpfLimpo.slice(3,6)}.${v.cpfLimpo.slice(6,9)}-**` 
+          : '***.***.***-**';
+        const cl = CLUBES[v.time] || { nome: v.time, emoji: '⚽' };
+        return `
+          <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-slate-850 border border-white/5 text-[11px]">
+            <span class="text-slate-300 font-medium">${v.nome || 'Torcedor'}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-slate-500 font-mono text-[10px]">${cpfMasc}</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 border border-white/10 text-emerald-400 font-bold">${cl.emoji} ${cl.nome}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* =========================================================================
+     * 6. BLOG DE ESPORTES E FUTEBOL (Coleção "posts_esportes")
+     * ========================================================================= */
+    let todosOsPosts = [];
+    let categoriaAtiva = 'todas';
+
+    const POSTS_INICIAIS = [
+      {
+        id: 'post-1',
+        titulo: 'Rodada Decisiva do Brasileirão 2026: Líderes entram em campo sob pressão máxima das torcidas',
+        subtitulo: 'Diferença de apenas dois pontos no topo da tabela transforma cada clássico em final antecipada.',
+        categoria: 'Brasileirão',
+        imagemUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
+        conteudo: 'A reta decisiva do Campeonato Brasileiro de 2026 atinge seu ápice de tensão e espetáculo. Com as arquibancadas esgotadas em menos de duas horas nas principais praças do país, os candidatos ao título entram na rodada cientes de que qualquer tropeço pode custar o troféu. Nas coletivas desta manhã, os técnicos ressaltaram a força da massa como o 12º jogador indispensável.',
+        dataLegivel: 'Hoje, há 15 min'
+      },
+      {
+        id: 'post-2',
+        titulo: 'Final da Libertadores 2026: Ingressos esgotados e caravanas mobilizam torcidas pelo continente',
+        subtitulo: 'Palco da grande final única recebe torcedores de Norte a Sul para o duelo mais esperado do futebol sul-americano.',
+        categoria: 'Libertadores',
+        imagemUrl: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&q=80',
+        conteudo: 'A Conmebol confirmou a venda total dos ingressos para a decisão da Copa Libertadores de 2026. A invasão dos torcedores brasileiros promete colorir a sede única em uma festa de fogos, baterias e bandeirões. A glória eterna está mais viva do que nunca.',
+        dataLegivel: 'Hoje, há 42 min'
+      },
+      {
+        id: 'post-3',
+        titulo: 'Mercado da Bola 2026: Gigantes travam duelo financeiro por reforços de peso internacional',
+        subtitulo: 'Investimentos das SAFs e arrecadações recordes de bilheteria aquecem a janela de transferências com cifras milionárias.',
+        categoria: 'Mercado da Bola',
+        imagemUrl: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80',
+        conteudo: 'O futebol brasileiro se consolida de vez como o centro financeiro da América do Sul. Com orçamentos turbinados por sócios-torcedores e contratos de patrocínio máster atualizados, as diretorias preparam anúncios de impacto que prometem agitar as redes sociais nos próximos dias.',
+        dataLegivel: 'Hoje, há 1 hora'
+      },
+      {
+        id: 'post-4',
+        titulo: 'Seleção Brasileira: Convocação com jovens talentos confirma modelo tático ofensivo',
+        subtitulo: 'Comissão técnica aposta em pontas velozes e transições dinâmicas para os próximos compromissos internacionais.',
+        categoria: 'Seleção Brasileira',
+        imagemUrl: 'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?auto=format&fit=crop&w=1200&q=80',
+        conteudo: 'A lista de convocados da Seleção Brasileira para as próximas rodadas das Eliminatórias trouxe o equilíbrio perfeito entre atletas consagrados no futebol europeu e destaques em grande fase nos gramados brasileiros.',
+        dataLegivel: 'Hoje, há 3 horas'
+      }
+    ];
+
+    function escutarPosts() {
+      if (db) {
+        const q = query(collection(db, "posts_esportes"), orderBy("dataHora", "desc"));
+        onSnapshot(q, (snapshot) => {
+          const posts = [];
+          snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            let dataLegivel = 'Recente';
+            if (data.dataHora?.toDate) {
+              dataLegivel = data.dataHora.toDate().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+            }
+            posts.push({ id: docSnap.id, ...data, dataLegivel });
+          });
+          todosOsPosts = posts.length > 0 ? posts : POSTS_INICIAIS;
+          renderizarBlog();
+        }, (err) => {
+          console.warn("Erro ao ouvir posts do Firestore:", err);
+          usarPostsLocais();
+        });
+      } else {
+        usarPostsLocais();
+      }
+    }
+
+    function usarPostsLocais() {
+      const salvos = JSON.parse(localStorage.getItem('tdt_posts') || '[]');
+      todosOsPosts = salvos.length > 0 ? salvos : POSTS_INICIAIS;
+      renderizarBlog();
+    }
+
+    function renderizarBlog() {
+      const grid = document.getElementById('gridNoticias');
+      const filtrados = categoriaAtiva === 'todas' 
+        ? todosOsPosts 
+        : todosOsPosts.filter(p => p.categoria?.toLowerCase() === categoriaAtiva.toLowerCase());
+
+      if (filtrados.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400 text-sm">
+            Nenhuma notícia encontrada na categoria selecionada.
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtrados.map(post => `
+        <article class="bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all duration-300 flex flex-col group backdrop-blur-md">
+          <div class="relative h-48 w-full overflow-hidden bg-slate-950">
+            <img 
+              src="${post.imagemUrl}" 
+              alt="${post.titulo}" 
+              class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              onerror="this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80'"
+            />
+            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-emerald-500 text-white text-[10px] font-black uppercase tracking-wider shadow-md">
+              ${post.categoria || 'Futebol'}
+            </span>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span class="text-[11px] text-slate-400 font-mono">${post.dataLegivel || 'Hoje'}</span>
+              <h3 class="font-sans font-bold text-lg text-white group-hover:text-emerald-400 transition leading-snug mt-1">
+                ${post.titulo}
+              </h3>
+              <p class="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                ${post.subtitulo || ''}
+              </p>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+              <span class="text-[11px] text-slate-400">Por Redação</span>
+              <button 
+                onclick="lerNoticia('${post.id}')"
+                class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition"
+              >
+                Ler Matéria Completa →
+              </button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    window.filtrarBlog = function(cat) {
+      categoriaAtiva = cat;
+      renderizarBlog();
+    };
+
+    window.lerNoticia = function(postId) {
+      const post = todosOsPosts.find(p => p.id === postId);
+      if (!post) return;
+
+      const modal = document.getElementById('modalLeitura');
+      const conteudo = document.getElementById('conteudoModalLeitura');
+
+      conteudo.innerHTML = `
+        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider border border-emerald-500/30">
+          ${post.categoria}
+        </span>
+        <h2 class="font-sans font-black text-2xl sm:text-3xl text-white mt-3 leading-snug">
+          ${post.titulo}
+        </h2>
+        <p class="text-sm text-slate-400 font-medium mt-2 pb-4 border-b border-white/10">
+          ${post.subtitulo || ''} • <span class="font-mono text-slate-400">${post.dataLegivel || 'Hoje'}</span>
+        </p>
+
+        <div class="rounded-2xl overflow-hidden my-4 max-h-80 bg-slate-950 border border-white/10">
+          <img src="${post.imagemUrl}" alt="${post.titulo}" class="w-full h-full object-cover" />
+        </div>
+
+        <div class="text-sm text-slate-200 leading-relaxed whitespace-pre-line space-y-3">
+          ${post.conteudo}
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+          <span class="text-xs text-slate-400">Termômetro da Torcida • Matéria Exclusiva</span>
+          <button onclick="fecharModalLeitura()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition">
+            Fechar Notícia
+          </button>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    window.fecharModalLeitura = function() {
+      const modal = document.getElementById('modalLeitura');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    };
+
+    /* =========================================================================
+     * 7. PAINEL ADMINISTRATIVO SECRETO
+     * ========================================================================= */
+    window.abrirAdminModal = function() {
+      const modal = document.getElementById('modalAdmin');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    window.fecharAdminModal = function() {
+      const modal = document.getElementById('modalAdmin');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    };
+
+    const MASTER_ADMIN_EMAIL = "lucyano.pci@gmail.com";
+
+    window.autenticarAdmin = function(e) {
+      e.preventDefault();
+      const email = (document.getElementById('adminEmail')?.value || '').trim().toLowerCase();
+      const senha = document.getElementById('adminSenha').value;
+      const erro = document.getElementById('adminLoginError');
+
+      if (email !== MASTER_ADMIN_EMAIL.toLowerCase()) {
+        erro.innerText = `⛔ Acesso Negado! O e-mail "${email}" não possui autorização. Apenas o administrador exclusivo ${MASTER_ADMIN_EMAIL} pode acessar o painel para publicar matérias.`;
+        erro.classList.remove('hidden');
+        return;
+      }
+
+      if (senha === 'torcida2026') {
+        document.getElementById('adminLoginScreen').classList.add('hidden');
+        document.getElementById('adminPanelContent').classList.remove('hidden');
+        erro.classList.add('hidden');
+      } else {
+        erro.innerText = 'Senha incorreta! Dica do sistema: torcida2026';
+        erro.classList.remove('hidden');
+      }
+    };
+
+    window.sairAdmin = function() {
+      document.getElementById('adminLoginScreen').classList.remove('hidden');
+      document.getElementById('adminPanelContent').classList.add('hidden');
+      document.getElementById('adminSenha').value = '';
+    };
+
+    window.setFotoPreset = function(url) {
+      document.getElementById('postImagemUrl').value = url;
+    };
+
+    window.criarNovoPost = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnPublicarPost');
+      const feedback = document.getElementById('postFeedback');
+
+      const titulo = document.getElementById('postTitulo').value.trim();
+      const subtitulo = document.getElementById('postSubtitulo').value.trim();
+      const categoria = document.getElementById('postCategoria').value;
+      const imagemUrl = document.getElementById('postImagemUrl').value.trim();
+      const conteudo = document.getElementById('postConteudo').value.trim();
+
+      btn.disabled = true;
+      btn.innerText = 'Publicando matéria...';
+
+      try {
+        if (db) {
+          // FIRESTORE V10
+          await addDoc(collection(db, "posts_esportes"), {
+            titulo,
+            subtitulo,
+            categoria,
+            imagemUrl,
+            conteudo,
+            dataHora: serverTimestamp(),
+            criadoEm: new Date().toISOString()
+          });
+
+          feedback.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300';
+          feedback.innerText = '🎉 Notícia salva com sucesso na coleção "posts_esportes" do Firestore!';
+          feedback.classList.remove('hidden');
+          document.getElementById('formNovoPost').reset();
+        } else {
+          // LOCAL FALLBACK
+          const posts = JSON.parse(localStorage.getItem('tdt_posts') || '[]');
+          const novo = {
+            id: 'post-' + Date.now(),
+            titulo,
+            subtitulo,
+            categoria,
+            imagemUrl,
+            conteudo,
+            dataLegivel: 'Agora mesmo'
+          };
+          posts.unshift(novo);
+          localStorage.setItem('tdt_posts', JSON.stringify(posts));
+          todosOsPosts = posts;
+          renderizarBlog();
+
+          feedback.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-950/60 border border-emerald-500/40 text-emerald-300';
+          feedback.innerText = '🎉 Notícia publicada no blog com sucesso!';
+          feedback.classList.remove('hidden');
+          document.getElementById('formNovoPost').reset();
+        }
+      } catch (err) {
+        console.error("Erro ao salvar notícia:", err);
+        feedback.className = 'p-3 rounded-xl text-xs font-semibold bg-rose-950/60 border border-rose-500/40 text-rose-300';
+        feedback.innerText = `Erro ao salvar notícia: ${err.message}`;
+        feedback.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'PUBLICAR NOTÍCIA NO BLOG 🚀';
+      }
+    };
+
+    // Inicialização ao carregar a página
+    window.addEventListener('DOMContentLoaded', () => {
+      escutarVotos();
+      escutarPosts();
+    });
+  </script>
+
+</body>
+</html>
